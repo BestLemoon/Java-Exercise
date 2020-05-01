@@ -1,3 +1,3 @@
 # Java-Exercise
-Ans for java exercise
+Answers for java exercises
 All code tested by Lemoon in CQUT
