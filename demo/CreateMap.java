@@ -36,25 +36,24 @@ public class CreateMap {
 
     // Use Prime to process the maze array and return the Maze
     // Tips:
-    // visit the nearest point randomly(visit all points once util visit all path)
-    // After visit all points in the Maze,it will generate a path(Random),when it visit next point randomly,It will break the wall between nodes
+    // visit the nearest node randomly(visit all nodes once util visit all path)
+    // After visit all nodes in the Maze,it will generate a path(Random),when it visit next node randomly,It will break the wall between nodes
     public void Prime() {
         // visited stores visited nodes
         // unvisited stores unvisited nodes
         int[] visited, unvisited;
         int count = row * column;
-        int visitedcount = 0;// 记录访问过点的数量
+        int visitedcount = 0;// count visited nodes
 
         visited = new int[count];
         unvisited = new int[count];
-        // row上各方向的偏移 column各方向的偏移 0左 1右 3上 2下
+        // R and C means offsite in row and column and the index 0 means left,1 means right, 3 means up, 2 means down
         int[] offR = { -1, 1, 0, 0 };
         int[] offC = { 0, 0, 1, -1 };
         // Off in four directions,Up Down Right Left
         int[] offS = { -1, 1, row, -row }; // Move Up and Down all means move a row
-        // 初始化 acc中0代表未访问,noacc中0代表未访问
         // Initialization
-        // 0 means unvisited
+        // all the 0 means unvisited
         for (int i = 0; i < count; i++) {
             visited[i] = 0;
             unvisited[i] = 0;
@@ -62,35 +61,37 @@ public class CreateMap {
 
         // Start
         Random random = new Random();
-        visited[0] = random.nextInt(count);// Starting Point
+        visited[0] = random.nextInt(count);// Starting node
         int pos = visited[0];
-        // Store the first point
+        // Store the first node
         unvisited[pos] = 1;
         while (visitedcount < count) {
-            // 取出现在的点
+            // get current node
             int x = pos % row;
-            int y = pos / row;// 该点的坐标
-            int offpos = -1;// 用于记录偏移量
+            int y = pos / row;
+            // the position of current node
+            int offpos = -1;// record the offsite
             int w = 0;
-            // 四个方向都尝试一遍 直到挖通为止
+            // try all directions util it works
             while (++w < 5) {
-                // 随机访问最近的点
-                int point = random.nextInt(4); // 0-3
+                //visit nearest node randomly
+                int point = random.nextInt(4); // generate 0-3 randomly and 0 means left,1 means right, 3 means up, 2 means down
                 int repos;
                 int move_x, move_y;
-                // 计算出移动方位
-                repos = pos + offS[point];// 移动后的下标
-                move_x = x + offR[point];// 移动后的方位
+                // calculate moved position
+                repos = pos + offS[point];
+                // the index of moved node
+                move_x = x + offR[point];
                 move_y = y + offC[point];
-                // 判断移动是否合法
+                // the position of moved node
+                // judge the movement is legal or illegal
                 if (move_y >= 0 && move_x >= 0 && move_x < row && move_y < column && repos >= 0 && repos < count
                         && unvisited[repos] != 1) {
-                    unvisited[repos] = 1;// 把该点标记为已访问
-                    visited[++visitedcount] = repos;// ++accsize代表第几个已经访问的点,repos代表该点的下标
-                    pos = repos;// 把该点作为起点
+                    unvisited[repos] = 1;// mark the node visited
+                    visited[++visitedcount] = repos;// ++accsize means the count of visited node,repos means the index of this node
+                    pos = repos;// change this node to starting node
                     offpos = point;
-                    // 相邻的格子中间的位置放1
-
+                    // place 1 between the two nodes
                     map[2 * x + 1 + offR[point]][2 * y + 1 + offC[point]] = 1;
                     break;
                 } else {
@@ -99,7 +100,7 @@ public class CreateMap {
                     continue;
                 }
             }
-            if (offpos < 0) {// 周边没有找到能走的路了 从走过的路里重新找个起点
+            if (offpos < 0) {// if there's no node to continue,secelt one visited node randomly and set this node as starting node
                 pos = visited[random.nextInt(visitedcount + 1)];}
         }
     }
