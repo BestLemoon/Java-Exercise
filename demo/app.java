@@ -19,100 +19,60 @@ class node {
     node() {
     }
 
-    node(int a, int b) {
-        x = a;
-        y = b;
+    node(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    void set(int a, int b) {
-        x = a;
-        y = b;
+    void set(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 }
 
 public class app extends Application {
-    public int Size = 15;// 有效地图大小,用于Prim算法生成地图
-    public static final int Range = 30;// 单元格边长
-    public int VSize = (Size * 2 + 1) * Range;// 实际地图大小
-    public int maze[][] = new int[VSize][VSize];// 地图
-    public int vis[][] = new int[VSize][VSize];// 访问过的路径
+    public int Size = 15;// the true size of the map
+    public static final int Range = 30;// the length of one node
+    public int VSize = (Size * 2 + 1) * Range;// the real size of the map 
+    public int maze[][] = new int[VSize][VSize];// maze array
+    public int vis[][] = new int[VSize][VSize];// visited nodes
     public node f[][] = new node[VSize][VSize];
-    public int[][] dir = {{-Range, 0}, {Range, 0}, {0, -Range}, {0, Range}};// 移动方向
-    public CreateMap c = new CreateMap(Size, Size);
+    public int[][] dir = {{-Range, 0}, {Range, 0}, {0, -Range}, {0, Range}};// movements
+    public CreateMap c = new CreateMap(Size, Size);//Use CreateMap to automatically generate a maze with given size
     Rectangle rec = new Rectangle(Range, Range, Range, Range);
     private int recX = 30, recY = 30;
-    private boolean autoPath = false;// 是否开启自动解图
 
     public void start(Stage stage) throws Exception {
 
         CreateMap();
-        Pane pane = Init();// 生成迷宫平台
-        Scene scene = new Scene(pane, VSize, VSize);
-
-        scene.setOnKeyPressed(k -> {
-            KeyCode code = k.getCode();
-            int tx = recX, ty = recY;
-            if (code.equals(KeyCode.LEFT) && autoPath == false) { // 按下了左键
-                tx -= Range;
-            } else if (code.equals(KeyCode.RIGHT) && autoPath == false) {// 按下了右键
-                tx += Range;
-            } else if (code.equals(KeyCode.UP) && autoPath == false) {// 按下了上方向键
-                ty -= Range;
-            } else if (code.equals(KeyCode.DOWN) && autoPath == false) {// 按下了下方向键
-                ty += Range;
-            } else if (code.equals(KeyCode.SPACE)) {
-                if (autoPath == false) {
-                    autoPath = true;
-                    node e = new node();
-                    e.set(recX, recY);
-                    autoMove(e);
-                }
-            }
-            if (inside(tx, ty) && maze[tx][ty] == 1 && autoPath == false) {
-                // System.out.println(recX+" "+recY+" "+tx + " " + ty);
-                move(tx, ty);
-                recX = tx;
-                recY = ty;
-            } else if (recX == VSize - Range * 2 && recY == VSize - Range * 2) {// 判断是否出界和撞墙
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.titleProperty().set("信息");
-                alert.headerTextProperty().set("You WIN!!!!");
-                alert.showAndWait();
-                try {
-                    start(stage);
-                } catch (Exception e) {
-                    // TODO 自动生成的 catch 块
-                    e.printStackTrace();
-                }
-                move(Range, Range);
-                recX = Range;
-                recY = Range;
-            }
-        });
+        Pane pane = Init();// Auto generate maze
+        node e = new node();
+        e.set(recX, recY);
+        autoMove(e);
         stage.setScene(scene);
         stage.centerOnScreen();
-        stage.setTitle("迷宫");
+        stage.setTitle("Maze");
         stage.show();
 
     }
 
-    public void move(int tx, int ty) {
-        SequentialTransition link = new SequentialTransition();// 动画列表
-        link.setNode(rec);
-        TranslateTransition tt = new TranslateTransition();
+//     public void move(int tx, int ty) {
+//         SequentialTransition link = new SequentialTransition();// list of animation
+//         link.setNode(rec);
+//         TranslateTransition tt = new TranslateTransition();
 
-        tt.setFromX(recX - 30);
-        tt.setToX(tx - 30);
-        tt.setFromY(recY - 30);
-        tt.setToY(ty - 30);
+//         tt.setFromX(recX - 30);
+//         tt.setToX(tx - 30);
+//         tt.setFromY(recY - 30);
+//         tt.setToY(ty - 30);
 
-        // System.out.println(recX+" "+recY+" "+tx+" "+ty);
-        link.getChildren().add(tt);
-        link.play();
-    }
+//         // System.out.println(recX+" "+recY+" "+tx+" "+ty);
+//         link.getChildren().add(tt);
+//         link.play();
+//     }
 
     public void CreateMap() {
-        c.Init();// 生成迷宫
+        c.Init();// Generate Maze
         for (int i = 0; i < VSize; i += Range) {
             for (int j = 0; j < VSize; j += Range) {
                 maze[i][j] = c.map[i / Range][j / Range];
@@ -178,10 +138,6 @@ public class app extends Application {
                     ans[++cnt] = new node(0, 0);
 
                     for (int l = cnt - 1; l > 0; l--) {
-                        // move(ans[l].x, ans[l].y);
-                        // System.out.println(recX + " " + recY + " " + ans[l].x + " " + ans[l].y);
-                        // recX = ans[l].x;
-                        // recY = ans[l].y;
                         TranslateTransition tt = new TranslateTransition();
                         tt.setFromX(ans[l].x - 30);
                         tt.setToX(ans[l - 1].x - 30);
