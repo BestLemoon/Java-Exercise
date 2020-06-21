@@ -97,12 +97,10 @@ public class CreateMap {
                 } else {
                     if (visitedcount == count - 1)
                         return;
-                    continue;
                 }
             }
-            if (offpos < 0) {// if there's no node to continue,secelt one visited node randomly and set this node as starting node
+            if (offpos < 0) {// if there's no node to continue,select one visited node randomly and set this node as starting node
                 pos = visited[random.nextInt(visitedcount + 1)];}
         }
     }
 }
-
